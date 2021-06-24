@@ -55,6 +55,6 @@ class DevicesController extends Controller
         ];
 
 
-        return $this->deviceService->updateDeviceFromLogicMonitorById($data,$deviceId);
+        return $this->deviceService->updateDeviceFromLogicMonitorById($data,$request->get('device_id'));
     }
 }
