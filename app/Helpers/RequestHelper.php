@@ -7,13 +7,18 @@ use GuzzleHttp\Psr7\Request;
 
 class RequestHelper
 {
-    private $accessId = '8xFt9gw4pzN576a8y3DA';
+    private $accessId = '';
+    private $accessKey = '';
+    private $baseUrl = '';
+    private $baseUrlStore = '';
 
-    private $accessKey = 'V-{Pi5G_EHtK6fru[Q4YatUm_(c+VG6[2N~K]}6Y';
-
-    private $baseUrl = "https://ukfast.logicmonitor.com/santaba/rest";
-
-    private $baseUrlStore = "https://mystoretesturl.com";
+    public function __construct()
+    {
+        $this->accessId = env("ACCESS_ID");
+        $this->accessKey = env('ACCESS_KEY');
+        $this->baseUrl = env('BASE_URL');
+        $this->baseUrlStore = env('BASE_URL_STORE');
+    }
 
     public function post($path, $data)
     {
@@ -45,7 +50,7 @@ class RequestHelper
 
     public function get($path)
     {
-        $url = $this->baseUrl.$path.'?size=5';
+        $url = $this->baseUrl.$path;
         $epoch = round(microtime(true) * 5000);
         $httpVerb = "GET";
 
@@ -68,10 +73,40 @@ class RequestHelper
 
         $result = curl_exec($ch);
         curl_close($ch);
+
         return json_decode($result, true);
     }
 
-    public function getWithParam($path,$queryParam){
+    public function put($path, $data)
+    {
+        $method = 'PUT';
+        $url = $this->baseUrl.$path;
+        $epoch = round(microtime(true) * 1000);
+
+        $data_string = json_encode($data, true);
+
+        $requestVars = $method.$epoch.$data_string.$path;//$httpVerb . $epoch . $data_string . $resourcePath;
+
+        //Generate Signature
+        $signature = base64_encode(hash_hmac('sha256', $requestVars, $this->accessKey));
+
+        //Setup headers
+        $auth = 'LMv1 '.$this->accessId.':'.$signature.':'.$epoch;
+
+        $headers = [
+            'Authorization' => [
+                $auth,
+            ],
+        ];
+
+        $client = new Client();
+        $request = new Request($method, $url, $headers, json_encode($data));
+
+        return $client->send($request)->getBody()->getContents();
+    }
+
+    public function getWithParam($path, $queryParam)
+    {
         $url = $this->baseUrl.$path.'?'.$queryParam;
         $epoch = round(microtime(true) * 5000);
         $httpVerb = "GET";
@@ -95,6 +130,7 @@ class RequestHelper
 
         $result = curl_exec($ch);
         curl_close($ch);
+
         return json_decode($result, true);
     }
 

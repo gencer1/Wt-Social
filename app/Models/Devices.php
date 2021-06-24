@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AccountsModel extends Model
+class Devices extends Model
 {
     use HasFactory;
+
+    protected $table = 'devices';
+
     protected $fillable = [
         'id',
         'account_id',
