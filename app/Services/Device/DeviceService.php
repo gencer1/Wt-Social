@@ -31,29 +31,7 @@ class DeviceService
         return $devices;
     }
 
-    public function updateDeviceFromLogicMonitorById($data):array{
-        $data = [
-            'relatedDeviceId'=> -1,
-            'displayName'=> 'Cisco Router',
-            'link'=> 'www.ciscorouter.com',
-            'description'=> 'This is a Cisco Router',
-            'disableAlerting'=> true,
-            'autoBalancedCollectorGroupId'=> 0,
-            'enableNetflow'=> true,
-            //'hostGroupIds'=> '16,4,3',
-            'deviceType'=> 0,
-            'currentCollectorId'=> 1,
-            'netflowCollectorId'=> 1,
-            'customProperties'=> [
-                [
-                    'name'=> 'addr',
-                  'value'=> '127.0.0.1'
-                ]
-            ],
-            'preferredCollectorId'=> 2,
-            'name'=> '192.168.1.1'
-        ];
-
-        dd($this->request->put('/device/devices/1008',$data));//$request->get('device_id'));
+    public function updateDeviceFromLogicMonitorById($data,$deviceId):array{
+        dd($this->request->put('/device/devices/'.$deviceId,$data));//$request->get('device_id'));
     }
 }
